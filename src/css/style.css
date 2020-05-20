@@ -1,0 +1,78 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: #DCDCDC;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.messenger_container {
+  border: 1px solid black;
+  width: 60%;
+  height: 95%;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  overflow: hidden;
+}
+
+.interface_container {
+  border: 1px solid red;
+  width: 100%;
+  height: 10%;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.messenger_field_container {
+  width: 100%;
+  height: 90%;
+  border: 1px solid green;
+}
+
+.messenger_field {
+  width: 100%;
+  height: 90%;
+  border: 1px solid brown;
+  background-color: brown;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  overflow-y: auto;
+  z-index: 99;
+}
+
+.messenger_input_container {
+  width: 100%;
+  height: 10%;
+  border: 1px solid yellowgreen;
+  background-color: yellowgreen;
+}
+
+.input_field {
+  width: 100%;
+  height: 50%;
+}
+
+.message {
+  background-color: violet;
+  border: 1px solid black;
+  max-width: 40%;
+  display: inline-block;
+  margin-right: 10px;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+.input {
+  position: absolute;
+  top: -999px;
+}
+
+.focus {
+  background-color: greenyellow;
+}
