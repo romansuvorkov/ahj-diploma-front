@@ -26,6 +26,8 @@ body {
   height: 10%;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .messenger_field_container {
@@ -51,21 +53,76 @@ body {
   height: 10%;
   border: 1px solid yellowgreen;
   background-color: yellowgreen;
+  position: relative;
 }
 
 .input_field {
   width: 100%;
   height: 50%;
+  padding-right: 15px;
+}
+
+.clip_btn {
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-image: url("../img/clip.png");
+  margin-top: 10px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.input_btn {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-image: url("../img/send.png");
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+}
+
+.background_image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .message {
-  background-color: violet;
+  margin-top: 10px;
+  background-color: grey;
   border: 1px solid black;
   max-width: 40%;
   display: inline-block;
   margin-right: 10px;
   padding: 10px;
   border-radius: 15px;
+}
+
+.image_message_item {
+  margin-top: 10px;
+  width: 250px;
+  height: 250px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: grey;
+  margin-right: 10px;
+  position: relative;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.link_download {
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  right: 15px;
+  top: 15px;
+  background-image: url("../img/download.png");
+  z-index: 20;
 }
 
 .input {
@@ -75,4 +132,40 @@ body {
 
 .focus {
   background-color: greenyellow;
+}
+
+.image_preview {
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.image_name {
+  position: absolute;
+  bottom: 5px;
+  left: 10px;
+}
+
+.file_message_item {
+  margin-top: 10px;
+  width: 250px;
+  height: 100px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: grey;
+  margin-right: 10px;
+  position: relative;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.file_preview {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  width: 50px;
+  height: 50px;
+  z-index: 10;
 }

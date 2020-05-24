@@ -5,17 +5,87 @@ export default class MessengerController {
     this.inputTextarea = document.querySelector('.input_field');
     this.inputDnD = document.querySelector('.input');
     this.messagesFieid = document.querySelector('.messenger_field');
+    this.clipBtn = document.querySelector('.clip_btn');
+    this.inputBtn = document.querySelector('.input_btn');
+    this.wsURL = `ws://localhost:7070/ws`;
+    // this.wsURL = `wss://ahj-diploma-serv.herokuapp.com/ws`;
+    this.lazyLoadCounter = 10;
+    this.messageslimit = 10;
+    this.messageCount = 0;
   }
 
   async init() {
-    const messagesList = await this.api.getMsg();
-    for (const item of messagesList) {
-      if (item.file) {
-        // console.log('123123');
-        this.renderer.addFileMsg(`${this.api.server}/${item.file}`, item.id);
+
+    this.ws = new WebSocket(this.wsURL);
+    this.ws.addEventListener('open', () => {
+      console.log('connected');
+    });
+
+    this.ws.addEventListener('message', (evt) => {
+      if (event.data && event.data !== null) {
+      const messageObject = JSON.parse(evt.data);
+      if (messageObject.type === 'text') {
+        console.log(messageObject.type);
+        this.messageCount += 1;
+        console.log('1');
+        console.log(this.messageCount);
+        this.renderer.addMsg(messageObject, 'append');
       } else {
-        this.renderer.addMsg(item.text, item.id);
+        console.log(messageObject.type);
+        this.messageCount += 1;
+        console.log('2');
+        console.log(this.messageCount);
+        this.renderer.addFileMsg(messageObject, 'append');
       }
+      // this.renderer.addMsg(messageObject.text, messageObject.id);
+      }
+    });
+
+    this.ws.addEventListener('close', (evt) => {
+      console.log('connection closed', evt);
+    });
+
+    this.ws.addEventListener('error', () => {
+      console.log('error');
+    });
+
+
+    const messagesList = await this.api.getTest(this.lazyLoadCounter);
+    // console.log(messagesList);
+    if (messagesList.length > this.lazyLoadCounter) {
+      for (let  i = 0; i < this.lazyLoadCounter; i += 1) {
+        let index = messagesList.length - 1 - i;
+        console.log(index);
+        if (messagesList[index].type === 'text') {
+          // console.log(item.type);
+          this.messageCount += 1;
+          console.log('3');
+          console.log(this.messageCount);
+          this.renderer.addMsg(messagesList[index], 'prepend');
+        } else {
+          this.messageCount += 1;
+          console.log('4');
+          console.log(this.messageCount);
+          this.renderer.addFileMsg(messagesList[index], 'prepend');
+        }
+      }
+    } else {
+      for (const item of messagesList) {
+        console.log(item.type);
+        if (item.type === 'text') {
+          // console.log(item.type);
+          this.messageCount += 1;
+          console.log('3');
+          console.log(this.messageCount);
+          this.renderer.addMsg(item, 'append');
+        } else {
+          this.messageCount += 1;
+          console.log('4');
+          console.log(this.messageCount);
+          this.renderer.addFileMsg(item, 'append');
+        }
+    }
+    
       // this.renderer.addMsg(item.text, item.id);
     }
 
@@ -30,23 +100,98 @@ export default class MessengerController {
     this.inputTextarea.addEventListener('keydown', async (event) => {
     //   console.log(this.inputTextarea.value);
       if (event.key === 'Enter') {
-        this.api.addMsg(this.inputTextarea.value);
+        event.preventDefault();
+        if (this.ws.readyState === WebSocket.OPEN) {
+          try {
+            const newTextMsg = {
+              type: 'text',
+              favorit: false,
+              msg: this.inputTextarea.value
+            };
+            this.ws.send(JSON.stringify(newTextMsg));
+            // this.sendText(this.inputTextarea.value);
+          } catch (e) {
+            console.log(e);
+          }
+        } else {
+          this.ws = new WebSocket(this.wsURL);
+          const newTextMsg = {
+            type: text,
+            favorit: false,
+            msg: this.inputTextarea.value
+          };
+          this.ws.send(JSON.stringify(newTextMsg));
+          // this.sendText(this.inputTextarea.value);
+        }
+        // this.api.addMsg(this.inputTextarea.value);
         this.inputTextarea.value = '';
-        const messages = await this.api.getMsg();
-        const lastMsg = messages.length - 1;
-        this.renderer.addMsg(messages[lastMsg].text, messages[lastMsg].id);
+        // const messages = await this.api.getMsg();
+        // const lastMsg = messages.length - 1;
+        // this.renderer.addMsg(messages[lastMsg].text, messages[lastMsg].id);
       }
     });
 
+    this.inputBtn.addEventListener('click', async (event) => {
+      //   console.log(this.inputTextarea.value);
+          // this.api.addMsg(this.inputTextarea.value);
+          if (this.ws.readyState === WebSocket.OPEN) {
+            try {
+              const newTextMsg = {
+                type: 'text',
+                favorit: false,
+                msg: this.inputTextarea.value
+              };
+              this.ws.send(JSON.stringify(newTextMsg));
+            } catch (e) {
+              console.log(e);
+            }
+          } else {
+            this.ws = new WebSocket(this.wsURL);
+            const newTextMsg = {
+              type: 'text',
+              favorit: false,
+              msg: this.inputTextarea.value
+            };
+            this.ws.send(JSON.stringify(newTextMsg));
+          }
+          this.inputTextarea.value = '';
+          // const messages = await this.api.getMsg();
+          // const lastMsg = messages.length - 1;
+          // this.renderer.addMsg(messages[lastMsg].text, messages[lastMsg].id);
+      });
+
     // console.log(this.messagesFieid);
 
-    // this.messagesFieid.addEventListener('click', () => {
-    //     this.inputDnD.dispatchEvent(new MouseEvent('click'));
-    // });
+    this.clipBtn.addEventListener('click', () => {
+        this.inputDnD.dispatchEvent(new MouseEvent('click'));
+    });
 
     this.inputDnD.addEventListener('input', (event) => {
       const files = Array.from(event.currentTarget.files);
-      this.api.uploadToServer(files);
+      // const files = Array.from(evt.dataTransfer.files);
+      // console.log(files);
+      // for (const file of files) {    
+        
+      
+      for (const item of files) {
+        // console.log(item);
+        const fileTypeRegExp = /[a-z]+/;
+        const fileType = item.type.match(fileTypeRegExp);
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(item);
+        fileReader.onload = () => {
+          // console.log(item.type);
+          // console.log(fileType);
+          const message = {
+            type: fileType,
+            favorit: false,
+            name: item.name,
+            msg: fileReader.result,
+          };
+          this.ws.send(JSON.stringify(message));
+        }
+      }
+      // this.api.uploadToServer(files);
     });
 
     this.messagesFieid.addEventListener('dragover', (evt) => {
@@ -63,7 +208,45 @@ export default class MessengerController {
       evt.preventDefault();
       this.messagesFieid.classList.remove('focus');
       const files = Array.from(evt.dataTransfer.files);
-      this.api.uploadToServer(files);
+        
+      
+      for (const item of files) {
+        console.log(item);
+        const fileTypeRegExp = /[a-z]+/;
+        const fileType = item.type.match(fileTypeRegExp)[0];
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(item);
+        fileReader.onload = () => {
+          console.log(item.type);
+          console.log(fileType);
+          const message = {
+            type: fileType,
+            favorit: false,
+            name: item.name,
+            msg: fileReader.result,
+          };
+          this.ws.send(JSON.stringify(message));
+        }
+
+
+      }
+
+    });
+
+    this.renderer.container.addEventListener('scroll', (event) => {
+      if (event.target.scrollTop === 0) {
+        this.lazyLoad();
+      }
     });
   }
+
+  lazyLoad() {
+    this.messageslimit = 10;
+
+
+
+  }
+
+
+
 }
