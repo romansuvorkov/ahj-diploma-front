@@ -6,9 +6,9 @@ export default class MessagesRender {
   }
 
   addMsg(obj, targetPlace) {
-    const searchlink = /(http[s]?:\/\/)[-\w.\/%а-яА-Я:]+/g;
+    const searchlink = /(http[s]?:\/\/)[-\w.\/%а-яА-Я:]+/g; // eslint-disable-line no-useless-escape
     let messageText = obj.msg;
-    let matchedLinks = [...messageText.matchAll(searchlink)];
+    const matchedLinks = [...messageText.matchAll(searchlink)];
 
     for (let i = 0; i < matchedLinks.length; i += 1) {
       // console.log(i);
@@ -24,15 +24,14 @@ export default class MessagesRender {
     newMsg.innerHTML = `${messageText}`;
     newMsg.dataset.id = obj.id;
     if (targetPlace === 'append') {
-      this.container.append(newMsg);  
+      this.container.append(newMsg);
     } else {
       this.container.prepend(newMsg);
     }
-
   }
 
   addFileMsg(obj, targetPlace) {
-    const newMsg = document.createElement('div');    
+    const newMsg = document.createElement('div');
     if (obj.type === 'image') {
       newMsg.innerHTML = `
             <img class="image_preview" src="${obj.msg}">
@@ -64,7 +63,7 @@ export default class MessagesRender {
     }
     newMsg.dataset.id = obj.id;
     if (targetPlace === 'append') {
-      this.container.append(newMsg);  
+      this.container.append(newMsg);
     } else {
       this.container.prepend(newMsg);
     }

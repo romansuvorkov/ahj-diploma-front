@@ -47,7 +47,6 @@ export default class API {
         }
         return reject(xhr.responseText);
       });
-      console.log(xhr);
       xhr.send();
     });
   }
