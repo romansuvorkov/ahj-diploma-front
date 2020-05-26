@@ -7,14 +7,22 @@ export default class MessengerController {
     this.messagesFieid = document.querySelector('.messenger_field');
     this.clipBtn = document.querySelector('.clip_btn');
     this.inputBtn = document.querySelector('.input_btn');
-    this.wsURL = `ws://localhost:7070/ws`;
-    // this.wsURL = `wss://ahj-diploma-serv.herokuapp.com/ws`;
+    // this.wsURL = `ws://localhost:7070/ws`;
+    this.wsURL = `wss://ahj-diploma-serv.herokuapp.com/ws`;
     this.lazyLoadCounter = 10;
     this.messageslimit = 10;
     this.messageCount = 0;
   }
 
   async init() {
+
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+    const test = arr.slice(5, 15);
+    console.log(test);
+
+
+
+
 
     this.ws = new WebSocket(this.wsURL);
     this.ws.addEventListener('open', () => {
@@ -25,16 +33,16 @@ export default class MessengerController {
       if (event.data && event.data !== null) {
       const messageObject = JSON.parse(evt.data);
       if (messageObject.type === 'text') {
-        console.log(messageObject.type);
+        // console.log(messageObject.type);
         this.messageCount += 1;
-        console.log('1');
-        console.log(this.messageCount);
+        // console.log('1');
+        // console.log(this.messageCount);
         this.renderer.addMsg(messageObject, 'append');
       } else {
         console.log(messageObject.type);
         this.messageCount += 1;
-        console.log('2');
-        console.log(this.messageCount);
+        // console.log('2');
+        // console.log(this.messageCount);
         this.renderer.addFileMsg(messageObject, 'append');
       }
       // this.renderer.addMsg(messageObject.text, messageObject.id);
@@ -50,8 +58,11 @@ export default class MessengerController {
     });
 
 
-    const messagesList = await this.api.getTest(this.lazyLoadCounter);
-    // console.log(messagesList);
+    const messagesList = await this.api.getMsg(this.lazyLoadCounter);
+
+    // const messagesListNew = await this.api.getTest(10);
+    // console.log('messagesListNew');
+    // console.log(messagesListNew);
     if (messagesList.length > this.lazyLoadCounter) {
       for (let  i = 0; i < this.lazyLoadCounter; i += 1) {
         let index = messagesList.length - 1 - i;
@@ -59,13 +70,13 @@ export default class MessengerController {
         if (messagesList[index].type === 'text') {
           // console.log(item.type);
           this.messageCount += 1;
-          console.log('3');
-          console.log(this.messageCount);
+          // console.log('3');
+          // console.log(this.messageCount);
           this.renderer.addMsg(messagesList[index], 'prepend');
         } else {
           this.messageCount += 1;
-          console.log('4');
-          console.log(this.messageCount);
+          // console.log('4');
+          // console.log(this.messageCount);
           this.renderer.addFileMsg(messagesList[index], 'prepend');
         }
       }
@@ -75,13 +86,13 @@ export default class MessengerController {
         if (item.type === 'text') {
           // console.log(item.type);
           this.messageCount += 1;
-          console.log('3');
-          console.log(this.messageCount);
+          // console.log('3');
+          // console.log(this.messageCount);
           this.renderer.addMsg(item, 'append');
         } else {
           this.messageCount += 1;
-          console.log('4');
-          console.log(this.messageCount);
+          // console.log('4');
+          // console.log(this.messageCount);
           this.renderer.addFileMsg(item, 'append');
         }
     }
@@ -105,11 +116,10 @@ export default class MessengerController {
           try {
             const newTextMsg = {
               type: 'text',
-              favorit: false,
+              favorite: false,
               msg: this.inputTextarea.value
             };
             this.ws.send(JSON.stringify(newTextMsg));
-            // this.sendText(this.inputTextarea.value);
           } catch (e) {
             console.log(e);
           }
@@ -117,17 +127,12 @@ export default class MessengerController {
           this.ws = new WebSocket(this.wsURL);
           const newTextMsg = {
             type: text,
-            favorit: false,
+            favorite: false,
             msg: this.inputTextarea.value
           };
           this.ws.send(JSON.stringify(newTextMsg));
-          // this.sendText(this.inputTextarea.value);
         }
-        // this.api.addMsg(this.inputTextarea.value);
         this.inputTextarea.value = '';
-        // const messages = await this.api.getMsg();
-        // const lastMsg = messages.length - 1;
-        // this.renderer.addMsg(messages[lastMsg].text, messages[lastMsg].id);
       }
     });
 
@@ -138,7 +143,7 @@ export default class MessengerController {
             try {
               const newTextMsg = {
                 type: 'text',
-                favorit: false,
+                favorite: false,
                 msg: this.inputTextarea.value
               };
               this.ws.send(JSON.stringify(newTextMsg));
@@ -149,7 +154,7 @@ export default class MessengerController {
             this.ws = new WebSocket(this.wsURL);
             const newTextMsg = {
               type: 'text',
-              favorit: false,
+              favorite: false,
               msg: this.inputTextarea.value
             };
             this.ws.send(JSON.stringify(newTextMsg));
@@ -184,7 +189,7 @@ export default class MessengerController {
           // console.log(fileType);
           const message = {
             type: fileType,
-            favorit: false,
+            favorite: false,
             name: item.name,
             msg: fileReader.result,
           };
@@ -211,17 +216,17 @@ export default class MessengerController {
         
       
       for (const item of files) {
-        console.log(item);
+        // console.log(item);
         const fileTypeRegExp = /[a-z]+/;
         const fileType = item.type.match(fileTypeRegExp)[0];
         const fileReader = new FileReader();
         fileReader.readAsDataURL(item);
         fileReader.onload = () => {
-          console.log(item.type);
-          console.log(fileType);
+          // console.log(item.type);
+          // console.log(fileType);
           const message = {
             type: fileType,
-            favorit: false,
+            favorite: false,
             name: item.name,
             msg: fileReader.result,
           };
@@ -235,16 +240,37 @@ export default class MessengerController {
 
     this.renderer.container.addEventListener('scroll', (event) => {
       if (event.target.scrollTop === 0) {
+        console.log('work')
         this.lazyLoad();
       }
     });
   }
 
-  lazyLoad() {
-    this.messageslimit = 10;
-
-
-
+  async lazyLoad() {
+    this.messageslimit += this.lazyLoadCounter;
+    console.log(this.messageslimit);
+    const messagesListNew = await this.api.getMsg(this.messageslimit);
+    console.log(messagesListNew);
+    if (messagesListNew === 'All loaded') {
+      alert('All loaded');
+    };
+    messagesListNew.reverse();
+    // console.log(messagesListNew);
+    for (const item of messagesListNew) {
+      // console.log(item.type);
+      if (item.type === 'text') {
+        // console.log(item.type);
+        this.messageCount += 1;
+        // console.log('3');
+        // console.log(this.messageCount);
+        this.renderer.addMsg(item, 'prepend');
+      } else {
+        this.messageCount += 1;
+        // console.log('4');
+        // console.log(this.messageCount);
+        this.renderer.addFileMsg(item, 'prepend');
+      }
+    }
   }
 
 

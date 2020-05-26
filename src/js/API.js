@@ -1,7 +1,7 @@
 export default class API {
   constructor() {
-    this.server = 'http://localhost:7070';
-    // this.server = 'https://ahj-diploma-serv.herokuapp.com';
+    // this.server = 'http://localhost:7070';
+    this.server = 'https://ahj-diploma-serv.herokuapp.com';
   }
 
   addMsg(text) {
@@ -21,22 +21,22 @@ export default class API {
     });
   }
 
-  getMsg() {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', `${this.server}/msgArr`);
-      xhr.addEventListener('load', () => {
-        if (xhr.status === 200) {
-          const messages = JSON.parse(xhr.responseText);
-          return resolve(messages);
-        }
-        return reject(xhr.responseText);
-      });
-      xhr.send();
-    });
-  }
+  // getMsg() {
+  //   return new Promise((resolve, reject) => {
+  //     const xhr = new XMLHttpRequest();
+  //     xhr.open('GET', `${this.server}/msgArr`);
+  //     xhr.addEventListener('load', () => {
+  //       if (xhr.status === 200) {
+  //         const messages = JSON.parse(xhr.responseText);
+  //         return resolve(messages);
+  //       }
+  //       return reject(xhr.responseText);
+  //     });
+  //     xhr.send();
+  //   });
+  // }
 
-  getTest(counter) {
+  getMsg(counter) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', `${this.server}/msgArr/${counter}`);
@@ -47,6 +47,7 @@ export default class API {
         }
         return reject(xhr.responseText);
       });
+      console.log(xhr);
       xhr.send();
     });
   }
