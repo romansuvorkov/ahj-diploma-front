@@ -8,10 +8,13 @@ export default class MessengerController {
     this.clipBtn = document.querySelector('.clip_btn');
     this.inputBtn = document.querySelector('.input_btn');
     // this.wsURL = `ws://localhost:7070/ws`;
+    this.favorite = document.querySelector('.favorite');
     this.wsURL = 'wss://ahj-diploma-serv.herokuapp.com/ws';
     this.lazyLoadCounter = 10;
     this.messageslimit = 10;
     this.messageCount = 0;
+    this.favoriteCount = 0;
+    this.favoriteSwitch = false;
   }
 
   async init() {
@@ -48,82 +51,100 @@ export default class MessengerController {
     //   console.log('error');
     // });
 
+    this.startDraw();
+    // const messagesList = await this.api.getMsg(this.lazyLoadCounter);
 
-    const messagesList = await this.api.getMsg(this.lazyLoadCounter);
+    // // const messagesListNew = await this.api.getTest(10);
+    // // console.log('messagesListNew');
+    // // console.log(messagesListNew);
+    // if (messagesList.length > this.lazyLoadCounter) {
+    //   for (let i = 0; i < this.lazyLoadCounter; i += 1) {
+    //     const index = messagesList.length - 1 - i;
+    //     // console.log(index);
+    //     if (messagesList[index].type === 'text') {
+    //       // console.log(item.type);
+    //       this.messageCount += 1;
+    //       // console.log('3');
+    //       // console.log(this.messageCount);
+    //       this.renderer.addMsg(messagesList[index], 'prepend');
+    //     } else {
+    //       this.messageCount += 1;
+    //       // console.log('4');
+    //       // console.log(this.messageCount);
+    //       this.renderer.addFileMsg(messagesList[index], 'prepend');
+    //     }
+    //   }
+    // } else {
+    //   for (const item of messagesList) {
+    //     // console.log(item.type);
+    //     if (item.type === 'text') {
+    //       // console.log(item.type);
+    //       this.messageCount += 1;
+    //       // console.log('3');
+    //       // console.log(this.messageCount);
+    //       this.renderer.addMsg(item, 'append');
+    //     } else {
+    //       this.messageCount += 1;
+    //       // console.log('4');
+    //       // console.log(this.messageCount);
+    //       this.renderer.addFileMsg(item, 'append');
+    //     }
+    //   }
 
-    // const messagesListNew = await this.api.getTest(10);
-    // console.log('messagesListNew');
-    // console.log(messagesListNew);
-    if (messagesList.length > this.lazyLoadCounter) {
-      for (let i = 0; i < this.lazyLoadCounter; i += 1) {
-        const index = messagesList.length - 1 - i;
-        // console.log(index);
-        if (messagesList[index].type === 'text') {
-          // console.log(item.type);
-          this.messageCount += 1;
-          // console.log('3');
-          // console.log(this.messageCount);
-          this.renderer.addMsg(messagesList[index], 'prepend');
-        } else {
-          this.messageCount += 1;
-          // console.log('4');
-          // console.log(this.messageCount);
-          this.renderer.addFileMsg(messagesList[index], 'prepend');
-        }
-      }
-    } else {
-      for (const item of messagesList) {
-        // console.log(item.type);
-        if (item.type === 'text') {
-          // console.log(item.type);
-          this.messageCount += 1;
-          // console.log('3');
-          // console.log(this.messageCount);
-          this.renderer.addMsg(item, 'append');
-        } else {
-          this.messageCount += 1;
-          // console.log('4');
-          // console.log(this.messageCount);
-          this.renderer.addFileMsg(item, 'append');
-        }
-      }
-
-      // this.renderer.addMsg(item.text, item.id);
-    }
+    //   // this.renderer.addMsg(item.text, item.id);
+    // }
 
     document.addEventListener('click', (event) => {
-      if (event.target.classList.contains('link_test')) {
-        // console.log(event.target);
-        // event.preventDefault();
+      if (event.target.classList.contains('message_favorite')) {
+        if (event.target.classList.contains('favorite_false')) {
+          event.target.classList.remove('favorite_false');
+          event.target.classList.add('favorite_active');
+          const targetID = event.target.parentNode.dataset.id;
+          const status = true;
+          this.api.changeStatus(targetID, status);
+        } else {
+          event.target.classList.remove('favorite_active');
+          event.target.classList.add('favorite_false');
+          const targetID = event.target.parentNode.dataset.id;
+          const status = false;
+          this.api.changeStatus(targetID, status);
+        }
+
+
+        // event.target.classList.toggle('favorite_active');
+        // event.target.classList.toggle('favorite_false');
       }
     });
 
 
     this.inputTextarea.addEventListener('keydown', async (event) => {
-    //   console.log(this.inputTextarea.value);
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        if (this.ws.readyState === WebSocket.OPEN) {
-          try {
+      if (event.key === 'Enter' && event.ctrlKey) {
+        if (this.inputTextarea.value !== '') {
+          event.preventDefault();
+          // console.log(this.inputTextarea.value);
+          if (this.ws.readyState === WebSocket.OPEN) {
+            try {
+              const newTextMsg = {
+                type: 'text',
+                favorite: false,
+                msg: this.inputTextarea.value,
+              };
+              // console.log(newTextMsg.msg);
+              this.ws.send(JSON.stringify(newTextMsg));
+            } catch (e) {
+            // console.log(e);
+            }
+          } else {
+            this.ws = new WebSocket(this.wsURL);
             const newTextMsg = {
               type: 'text',
               favorite: false,
               msg: this.inputTextarea.value,
             };
             this.ws.send(JSON.stringify(newTextMsg));
-          } catch (e) {
-            // console.log(e);
           }
-        } else {
-          this.ws = new WebSocket(this.wsURL);
-          const newTextMsg = {
-            type: 'text',
-            favorite: false,
-            msg: this.inputTextarea.value,
-          };
-          this.ws.send(JSON.stringify(newTextMsg));
+          this.inputTextarea.value = '';
         }
-        this.inputTextarea.value = '';
       }
     });
 
@@ -166,16 +187,17 @@ export default class MessengerController {
       const files = Array.from(event.currentTarget.files);
       // const files = Array.from(evt.dataTransfer.files);
       // console.log(files);
-      // for (const file of files) {
 
 
       for (const item of files) {
         // console.log(item);
         const fileTypeRegExp = /[a-z]+/;
-        const fileType = item.type.match(fileTypeRegExp);
+        const fileType = item.type.match(fileTypeRegExp)[0];
         const fileReader = new FileReader();
         fileReader.readAsDataURL(item);
         fileReader.onload = () => {
+          // console.log(item.type);
+          // console.log(item);
           // console.log(item.type);
           // console.log(fileType);
           const message = {
@@ -184,6 +206,7 @@ export default class MessengerController {
             name: item.name,
             msg: fileReader.result,
           };
+
           this.ws.send(JSON.stringify(message));
         };
       }
@@ -232,6 +255,21 @@ export default class MessengerController {
         this.lazyLoad();
       }
     });
+
+    this.favorite.addEventListener('click', () => {
+      this.favorite.classList.toggle('favorite_active');
+      this.favorite.classList.toggle('favorite_false');
+      if (!this.favoriteSwitch) {
+        this.favoriteSwitch = true;
+        this.favoriteInterface();
+      } else {
+        this.favoriteSwitch = false;
+        while (this.renderer.container.firstChild) {
+          this.renderer.container.removeChild(this.renderer.container.firstChild);
+        }
+        this.startDraw();
+      }
+    });
   }
 
   async lazyLoad() {
@@ -258,6 +296,66 @@ export default class MessengerController {
         // console.log(this.messageCount);
         this.renderer.addFileMsg(item, 'prepend');
       }
+    }
+  }
+
+  async favoriteInterface() {
+    while (this.renderer.container.firstChild) {
+      this.renderer.container.removeChild(this.renderer.container.firstChild);
+    }
+    const favoriteList = await this.api.getfavorire(this.lazyLoadCounter);
+    for (const item of favoriteList) {
+      if (item.type === 'text') {
+        this.messageCount += 1;
+        this.renderer.addMsg(item, 'append');
+      } else {
+        this.messageCount += 1;
+        this.renderer.addFileMsg(item, 'append');
+      }
+    }
+  }
+
+  async startDraw() {
+    const messagesList = await this.api.getMsg(this.lazyLoadCounter);
+
+    // const messagesListNew = await this.api.getTest(10);
+    // console.log('messagesListNew');
+    // console.log(messagesListNew);
+    if (messagesList.length > this.lazyLoadCounter) {
+      for (let i = 0; i < this.lazyLoadCounter; i += 1) {
+        const index = messagesList.length - 1 - i;
+        // console.log(index);
+        if (messagesList[index].type === 'text') {
+          // console.log(item.type);
+          this.messageCount += 1;
+          // console.log('3');
+          // console.log(this.messageCount);
+          this.renderer.addMsg(messagesList[index], 'prepend');
+        } else {
+          this.messageCount += 1;
+          // console.log('4');
+          // console.log(this.messageCount);
+          this.renderer.addFileMsg(messagesList[index], 'prepend');
+        }
+      }
+    } else {
+      for (const item of messagesList) {
+        // console.log(item.type);
+        if (item.type === 'text') {
+          // console.log(item.type);
+          this.messageCount += 1;
+          // console.log('3');
+          // console.log(this.messageCount);
+          this.renderer.addMsg(item, 'append');
+        } else {
+          this.messageCount += 1;
+          // console.log('4');
+          // console.log(this.messageCount);
+          this.renderer.addFileMsg(item, 'append');
+        }
+      }
+
+      // this.renderer.addMsg(item.text, item.id);
     }
   }
 }

@@ -21,20 +21,20 @@ export default class API {
     });
   }
 
-  // getMsg() {
-  //   return new Promise((resolve, reject) => {
-  //     const xhr = new XMLHttpRequest();
-  //     xhr.open('GET', `${this.server}/msgArr`);
-  //     xhr.addEventListener('load', () => {
-  //       if (xhr.status === 200) {
-  //         const messages = JSON.parse(xhr.responseText);
-  //         return resolve(messages);
-  //       }
-  //       return reject(xhr.responseText);
-  //     });
-  //     xhr.send();
-  //   });
-  // }
+  getfavorire() {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `${this.server}/msgArr`);
+      xhr.addEventListener('load', () => {
+        if (xhr.status === 200) {
+          const messages = JSON.parse(xhr.responseText);
+          return resolve(messages);
+        }
+        return reject(xhr.responseText);
+      });
+      xhr.send();
+    });
+  }
 
   getMsg(counter) {
     return new Promise((resolve, reject) => {
@@ -145,22 +145,22 @@ export default class API {
   //   });
   // }
 
-  // changeStatus(id, status) {
-  //   return new Promise((resolve, reject) => {
-  //     const params = new URLSearchParams();
-  //     params.append('id', id);
-  //     params.append('status', status);
+  changeStatus(id, status) {
+    return new Promise((resolve, reject) => {
+      const params = new URLSearchParams();
+      params.append('id', id);
+      params.append('status', status);
 
-  //     const xhr = new XMLHttpRequest();
-  //     xhr.open('PATCH', `${this.server}/ticketList?${params}`);
-  //     xhr.addEventListener('load', () => {
-  //       if (xhr.status === 200) {
-  //         const ticketList = xhr.responseText;
-  //         return resolve(ticketList);
-  //       }
-  //       return reject(xhr.responseText);
-  //     });
-  //     xhr.send();
-  //   });
-  // }
+      const xhr = new XMLHttpRequest();
+      xhr.open('PATCH', `${this.server}/favorite?${params}`);
+      xhr.addEventListener('load', () => {
+        if (xhr.status === 204) {
+          const response = xhr.responseText;
+          return resolve(response);
+        }
+        return reject(xhr.responseText);
+      });
+      xhr.send();
+    });
+  }
 }

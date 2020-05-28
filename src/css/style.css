@@ -93,8 +93,8 @@ body {
   margin-top: 10px;
   background-color: grey;
   border: 1px solid black;
-  max-width: 40%;
-  display: inline-block;
+  max-width: 90%;
+  /* display: block; */
   margin-right: 10px;
   padding: 10px;
   border-radius: 15px;
@@ -168,4 +168,39 @@ body {
   width: 50px;
   height: 50px;
   z-index: 10;
+}
+
+.favorite {
+  display: block;
+  width: 30px;
+  height: 30px;
+  /* background-image: url("../img/star_empty.png"); */
+  margin-top: 10px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.favorite_false {
+  background-image: url("../img/star_empty.png");
+}
+
+.favorite_active {
+  background-image: url("../img/star.png");
+}
+
+.message_favorite {
+  width: 15px;
+  height: 15px;
+  /* background-image: url("../img/star_empty.png"); */
+  cursor: pointer;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: block;
+}
+
+.message_vrapper {
+  max-width: 50%;
+  display: flex;
+  align-items: center;
 }

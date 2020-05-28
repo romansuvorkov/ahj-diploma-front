@@ -17,20 +17,42 @@ export default class MessagesRender {
       <a href="${matchedLinks[i][0]}">${matchedLinks[i][0]}</a>
     `);
     }
-
+    const messageWrapper = document.createElement('div');
+    messageWrapper.classList.add('message_vrapper');
+    const messageFavorite = document.createElement('span');
+    messageFavorite.classList.add('message_favorite');
+    // console.log(obj);
+    if (obj.favorite === 'true') {
+      messageFavorite.classList.add('favorite_active');
+    } else {
+      messageFavorite.classList.add('favorite_false');
+    }
+    // messageFavorite.classList.add('favorite_false');
     const newMsg = document.createElement('div');
     newMsg.classList.add('message');
     // newMsg.textContent = messageText;
     newMsg.innerHTML = `${messageText}`;
-    newMsg.dataset.id = obj.id;
+    // console.log(messageText);
+    messageWrapper.dataset.id = obj.id;
+    messageWrapper.append(messageFavorite);
+    messageWrapper.append(newMsg);
     if (targetPlace === 'append') {
-      this.container.append(newMsg);
+      this.container.append(messageWrapper);
     } else {
-      this.container.prepend(newMsg);
+      this.container.prepend(messageWrapper);
     }
   }
 
   addFileMsg(obj, targetPlace) {
+    const messageWrapper = document.createElement('div');
+    messageWrapper.classList.add('message_vrapper');
+    const messageFavorite = document.createElement('span');
+    messageFavorite.classList.add('message_favorite');
+    if (obj.favorite === 'true') {
+      messageFavorite.classList.add('favorite_active');
+    } else {
+      messageFavorite.classList.add('favorite_false');
+    }
     const newMsg = document.createElement('div');
     if (obj.type === 'image') {
       newMsg.innerHTML = `
@@ -61,11 +83,13 @@ export default class MessagesRender {
           `;
       newMsg.classList.add('file_message_item');
     }
-    newMsg.dataset.id = obj.id;
+    messageWrapper.dataset.id = obj.id;
+    messageWrapper.append(messageFavorite);
+    messageWrapper.append(newMsg);
     if (targetPlace === 'append') {
-      this.container.append(newMsg);
+      this.container.append(messageWrapper);
     } else {
-      this.container.prepend(newMsg);
+      this.container.prepend(messageWrapper);
     }
   }
 }
