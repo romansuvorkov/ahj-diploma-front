@@ -1,11 +1,12 @@
 export default class MessengerController {
-  constructor(api, renderer) {
+  constructor(api, renderer, geo) {
     this.api = api;
     this.renderer = renderer;
     this.inputTextarea = document.querySelector('.input_field');
     this.inputDnD = document.querySelector('.input');
     this.messagesFieid = document.querySelector('.messenger_field');
     this.clipBtn = document.querySelector('.clip_btn');
+    this.geoBtn = document.querySelector('.geo_btn');
     this.inputBtn = document.querySelector('.input_btn');
     // this.wsURL = `ws://localhost:7070/ws`;
     this.favorite = document.querySelector('.favorite');
@@ -15,6 +16,8 @@ export default class MessengerController {
     this.messageCount = 0;
     this.favoriteCount = 0;
     this.favoriteSwitch = false;
+    this.geolocation = geo;
+    this.coordinates = null;
   }
 
   async init() {
@@ -128,6 +131,7 @@ export default class MessengerController {
                 type: 'text',
                 favorite: false,
                 msg: this.inputTextarea.value,
+                geo: this.coordinates,
               };
               // console.log(newTextMsg.msg);
               this.ws.send(JSON.stringify(newTextMsg));
@@ -140,6 +144,7 @@ export default class MessengerController {
               type: 'text',
               favorite: false,
               msg: this.inputTextarea.value,
+              geo: this.coordinates,
             };
             this.ws.send(JSON.stringify(newTextMsg));
           }
@@ -157,6 +162,7 @@ export default class MessengerController {
             type: 'text',
             favorite: false,
             msg: this.inputTextarea.value,
+            geo: this.coordinates,
           };
           this.ws.send(JSON.stringify(newTextMsg));
         } catch (e) {
@@ -168,6 +174,7 @@ export default class MessengerController {
           type: 'text',
           favorite: false,
           msg: this.inputTextarea.value,
+          geo: this.coordinates,
         };
         this.ws.send(JSON.stringify(newTextMsg));
       }
@@ -205,8 +212,8 @@ export default class MessengerController {
             favorite: false,
             name: item.name,
             msg: fileReader.result,
+            geo: this.coordinates,
           };
-
           this.ws.send(JSON.stringify(message));
         };
       }
@@ -243,6 +250,7 @@ export default class MessengerController {
             favorite: false,
             name: item.name,
             msg: fileReader.result,
+            geo: this.coordinates,
           };
           this.ws.send(JSON.stringify(message));
         };
@@ -270,7 +278,26 @@ export default class MessengerController {
         this.startDraw();
       }
     });
+
+    this.geoBtn.addEventListener('click', async () => {
+      if (this.coordinates === null) {
+        this.coordinates = await this.geolocation.getLocation();
+        this.geoBtn.classList.remove('geo_off');
+        this.geoBtn.classList.add('geo_on');
+      } else {
+        this.coordinates = null;
+        this.geoBtn.classList.remove('geo_on');
+        this.geoBtn.classList.add('geo_off');
+      }
+    });
+
+    if (this.coordinates === null) {
+      this.geoBtn.classList.add('geo_off');
+    } else {
+      this.geoBtn.classList.add('geo_on');
+    }
   }
+
 
   async lazyLoad() {
     this.messageslimit += this.lazyLoadCounter;

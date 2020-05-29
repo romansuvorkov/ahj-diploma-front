@@ -30,12 +30,23 @@ export default class MessagesRender {
     // messageFavorite.classList.add('favorite_false');
     const newMsg = document.createElement('div');
     newMsg.classList.add('message');
+    const msgContent = document.createElement('span');
+    msgContent.innerHTML = `${messageText}`;
+    msgContent.classList.add('message_content');
+    newMsg.append(msgContent);
     // newMsg.textContent = messageText;
-    newMsg.innerHTML = `${messageText}`;
+    // newMsg.innerHTML = `${messageText}`;
     // console.log(messageText);
     messageWrapper.dataset.id = obj.id;
     messageWrapper.append(messageFavorite);
     messageWrapper.append(newMsg);
+    // console.log(obj);
+    if (obj.geo !== null) {
+      const geo = document.createElement('span');
+      geo.innerHTML = `${obj.geo}`;
+      geo.classList.add('geo');
+      msgContent.append(geo);
+    }
     if (targetPlace === 'append') {
       this.container.append(messageWrapper);
     } else {
@@ -84,8 +95,17 @@ export default class MessagesRender {
       newMsg.classList.add('file_message_item');
     }
     messageWrapper.dataset.id = obj.id;
+    // console.log(obj);
+    if (obj.geo !== null) {
+      const geo = document.createElement('span');
+      geo.innerHTML = `${obj.geo}`;
+      geo.classList.add('geo');
+      newMsg.append(geo);
+    }
     messageWrapper.append(messageFavorite);
     messageWrapper.append(newMsg);
+
+
     if (targetPlace === 'append') {
       this.container.append(messageWrapper);
     } else {

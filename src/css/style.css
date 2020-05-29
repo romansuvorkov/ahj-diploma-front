@@ -89,15 +89,27 @@ body {
   background-size: contain;
 }
 
-.message {
+.message {  
   margin-top: 10px;
+  max-width: 90%;
   background-color: grey;
   border: 1px solid black;
-  max-width: 90%;
   /* display: block; */
   margin-right: 10px;
   padding: 10px;
   border-radius: 15px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.message_content {
+  display: block;
+  width: 100%;
+}
+
+.geo {
+  display: block;
+  width: 100%;
 }
 
 .image_message_item {
@@ -112,6 +124,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+  box-sizing: border-box;
 }
 
 .link_download {
@@ -135,15 +148,9 @@ body {
 }
 
 .image_preview {
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 80%;
   z-index: 10;
-}
-
-.image_name {
-  position: absolute;
-  bottom: 5px;
-  left: 10px;
 }
 
 .file_message_item {
@@ -188,6 +195,14 @@ body {
   background-image: url("../img/star.png");
 }
 
+.geo_on {
+  background-image: url("../img/geo.png");
+}
+
+.geo_off {
+  background-image: url("../img/geo_off.png");
+}
+
 .message_favorite {
   width: 15px;
   height: 15px;
@@ -203,4 +218,53 @@ body {
   max-width: 50%;
   display: flex;
   align-items: center;
+}
+
+.geo_btn {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.popup_container {
+  position: relative;
+  width: 50%;
+}
+
+.popup_location {
+  position: absolute;
+  background-color: white;
+  border: 1px solid red;
+  z-index: 110;
+  padding: 15px;
+  border-radius: 15px;
+  width: 100%;
+}
+
+.popup_reset {
+  display: block;
+  border: 1px solid black;
+  width: 100px;
+  text-align: center;
+  border-radius: 15px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.popup_ok {
+  display: block;
+  border: 1px solid black;
+  width: 100px;
+  text-align: center;
+  border-radius: 15px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.btn_container {
+  display: flex;
+  margin-bottom: 10px;
 }
