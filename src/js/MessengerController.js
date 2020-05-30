@@ -8,13 +8,11 @@ export default class MessengerController {
     this.clipBtn = document.querySelector('.clip_btn');
     this.geoBtn = document.querySelector('.geo_btn');
     this.inputBtn = document.querySelector('.input_btn');
-    // this.wsURL = `ws://localhost:7070/ws`;
+    // this.wsURL = 'ws://localhost:7070/ws';
     this.favorite = document.querySelector('.favorite');
     this.wsURL = 'wss://ahj-diploma-serv.herokuapp.com/ws';
     this.lazyLoadCounter = 10;
     this.messageslimit = 10;
-    this.messageCount = 0;
-    this.favoriteCount = 0;
     this.favoriteSwitch = false;
     this.geolocation = geo;
     this.coordinates = null;
@@ -22,80 +20,19 @@ export default class MessengerController {
 
   async init() {
     this.ws = new WebSocket(this.wsURL);
-    // this.ws.addEventListener('open', () => {
-    //   console.log('connected');
-    // });
 
     this.ws.addEventListener('message', (event) => {
       if (event.data && event.data !== null) {
         const messageObject = JSON.parse(event.data);
         if (messageObject.type === 'text') {
-        // console.log(messageObject.type);
-          this.messageCount += 1;
-          // console.log('1');
-          // console.log(this.messageCount);
           this.renderer.addMsg(messageObject, 'append');
         } else {
-          // console.log(messageObject.type);
-          this.messageCount += 1;
-          // console.log('2');
-          // console.log(this.messageCount);
           this.renderer.addFileMsg(messageObject, 'append');
         }
-      // this.renderer.addMsg(messageObject.text, messageObject.id);
       }
     });
 
-    // this.ws.addEventListener('close', (evt) => {
-    // console.log('connection closed', evt);
-    // });
-
-    // this.ws.addEventListener('error', () => {
-    //   console.log('error');
-    // });
-
     this.startDraw();
-    // const messagesList = await this.api.getMsg(this.lazyLoadCounter);
-
-    // // const messagesListNew = await this.api.getTest(10);
-    // // console.log('messagesListNew');
-    // // console.log(messagesListNew);
-    // if (messagesList.length > this.lazyLoadCounter) {
-    //   for (let i = 0; i < this.lazyLoadCounter; i += 1) {
-    //     const index = messagesList.length - 1 - i;
-    //     // console.log(index);
-    //     if (messagesList[index].type === 'text') {
-    //       // console.log(item.type);
-    //       this.messageCount += 1;
-    //       // console.log('3');
-    //       // console.log(this.messageCount);
-    //       this.renderer.addMsg(messagesList[index], 'prepend');
-    //     } else {
-    //       this.messageCount += 1;
-    //       // console.log('4');
-    //       // console.log(this.messageCount);
-    //       this.renderer.addFileMsg(messagesList[index], 'prepend');
-    //     }
-    //   }
-    // } else {
-    //   for (const item of messagesList) {
-    //     // console.log(item.type);
-    //     if (item.type === 'text') {
-    //       // console.log(item.type);
-    //       this.messageCount += 1;
-    //       // console.log('3');
-    //       // console.log(this.messageCount);
-    //       this.renderer.addMsg(item, 'append');
-    //     } else {
-    //       this.messageCount += 1;
-    //       // console.log('4');
-    //       // console.log(this.messageCount);
-    //       this.renderer.addFileMsg(item, 'append');
-    //     }
-    //   }
-
-    //   // this.renderer.addMsg(item.text, item.id);
-    // }
 
     document.addEventListener('click', (event) => {
       if (event.target.classList.contains('message_favorite')) {
@@ -112,19 +49,15 @@ export default class MessengerController {
           const status = false;
           this.api.changeStatus(targetID, status);
         }
-
-
-        // event.target.classList.toggle('favorite_active');
-        // event.target.classList.toggle('favorite_false');
       }
     });
 
 
     this.inputTextarea.addEventListener('keydown', async (event) => {
       if (event.key === 'Enter' && event.ctrlKey) {
-        if (this.inputTextarea.value !== '') {
+        const valid = /[\wа-яА-Я]/;
+        if (this.inputTextarea.value !== '' && this.inputTextarea.value.search(valid) !== -1) {
           event.preventDefault();
-          // console.log(this.inputTextarea.value);
           if (this.ws.readyState === WebSocket.OPEN) {
             try {
               const newTextMsg = {
@@ -133,7 +66,6 @@ export default class MessengerController {
                 msg: this.inputTextarea.value,
                 geo: this.coordinates,
               };
-              // console.log(newTextMsg.msg);
               this.ws.send(JSON.stringify(newTextMsg));
             } catch (e) {
             // console.log(e);
@@ -154,10 +86,22 @@ export default class MessengerController {
     });
 
     this.inputBtn.addEventListener('click', async () => {
-      //   console.log(this.inputTextarea.value);
-      // this.api.addMsg(this.inputTextarea.value);
-      if (this.ws.readyState === WebSocket.OPEN) {
-        try {
+      const valid = /[\wа-яА-Я]/;
+      if (this.inputTextarea.value !== '' && this.inputTextarea.value.search(valid) !== -1) {
+        if (this.ws.readyState === WebSocket.OPEN) {
+          try {
+            const newTextMsg = {
+              type: 'text',
+              favorite: false,
+              msg: this.inputTextarea.value,
+              geo: this.coordinates,
+            };
+            this.ws.send(JSON.stringify(newTextMsg));
+          } catch (e) {
+            // console.log(e);
+          }
+        } else {
+          this.ws = new WebSocket(this.wsURL);
           const newTextMsg = {
             type: 'text',
             favorite: false,
@@ -165,26 +109,10 @@ export default class MessengerController {
             geo: this.coordinates,
           };
           this.ws.send(JSON.stringify(newTextMsg));
-        } catch (e) {
-          // console.log(e);
         }
-      } else {
-        this.ws = new WebSocket(this.wsURL);
-        const newTextMsg = {
-          type: 'text',
-          favorite: false,
-          msg: this.inputTextarea.value,
-          geo: this.coordinates,
-        };
-        this.ws.send(JSON.stringify(newTextMsg));
+        this.inputTextarea.value = '';
       }
-      this.inputTextarea.value = '';
-      // const messages = await this.api.getMsg();
-      // const lastMsg = messages.length - 1;
-      // this.renderer.addMsg(messages[lastMsg].text, messages[lastMsg].id);
     });
-
-    // console.log(this.messagesFieid);
 
     this.clipBtn.addEventListener('click', () => {
       this.inputDnD.dispatchEvent(new MouseEvent('click'));
@@ -192,21 +120,13 @@ export default class MessengerController {
 
     this.inputDnD.addEventListener('input', (event) => {
       const files = Array.from(event.currentTarget.files);
-      // const files = Array.from(evt.dataTransfer.files);
-      // console.log(files);
-
 
       for (const item of files) {
-        // console.log(item);
         const fileTypeRegExp = /[a-z]+/;
         const fileType = item.type.match(fileTypeRegExp)[0];
         const fileReader = new FileReader();
         fileReader.readAsDataURL(item);
         fileReader.onload = () => {
-          // console.log(item.type);
-          // console.log(item);
-          // console.log(item.type);
-          // console.log(fileType);
           const message = {
             type: fileType,
             favorite: false,
@@ -217,7 +137,6 @@ export default class MessengerController {
           this.ws.send(JSON.stringify(message));
         };
       }
-      // this.api.uploadToServer(files);
     });
 
     this.messagesFieid.addEventListener('dragover', (evt) => {
@@ -237,14 +156,11 @@ export default class MessengerController {
 
 
       for (const item of files) {
-        // console.log(item);
         const fileTypeRegExp = /[a-z]+/;
         const fileType = item.type.match(fileTypeRegExp)[0];
         const fileReader = new FileReader();
         fileReader.readAsDataURL(item);
         fileReader.onload = () => {
-          // console.log(item.type);
-          // console.log(fileType);
           const message = {
             type: fileType,
             favorite: false,
@@ -259,7 +175,6 @@ export default class MessengerController {
 
     this.renderer.container.addEventListener('scroll', (event) => {
       if (event.target.scrollTop === 0) {
-        // console.log('work');
         this.lazyLoad();
       }
     });
@@ -301,26 +216,15 @@ export default class MessengerController {
 
   async lazyLoad() {
     this.messageslimit += this.lazyLoadCounter;
-    // console.log(this.messageslimit);
     const messagesListNew = await this.api.getMsg(this.messageslimit);
-    // console.log(messagesListNew);
     if (messagesListNew === 'All loaded') {
       alert('All loaded');
     }
     messagesListNew.reverse();
-    // console.log(messagesListNew);
     for (const item of messagesListNew) {
-      // console.log(item.type);
       if (item.type === 'text') {
-        // console.log(item.type);
-        this.messageCount += 1;
-        // console.log('3');
-        // console.log(this.messageCount);
         this.renderer.addMsg(item, 'prepend');
       } else {
-        this.messageCount += 1;
-        // console.log('4');
-        // console.log(this.messageCount);
         this.renderer.addFileMsg(item, 'prepend');
       }
     }
@@ -333,10 +237,8 @@ export default class MessengerController {
     const favoriteList = await this.api.getfavorire(this.lazyLoadCounter);
     for (const item of favoriteList) {
       if (item.type === 'text') {
-        this.messageCount += 1;
         this.renderer.addMsg(item, 'append');
       } else {
-        this.messageCount += 1;
         this.renderer.addFileMsg(item, 'append');
       }
     }
@@ -345,44 +247,23 @@ export default class MessengerController {
   async startDraw() {
     const messagesList = await this.api.getMsg(this.lazyLoadCounter);
 
-    // const messagesListNew = await this.api.getTest(10);
-    // console.log('messagesListNew');
-    // console.log(messagesListNew);
     if (messagesList.length > this.lazyLoadCounter) {
       for (let i = 0; i < this.lazyLoadCounter; i += 1) {
         const index = messagesList.length - 1 - i;
-        // console.log(index);
         if (messagesList[index].type === 'text') {
-          // console.log(item.type);
-          this.messageCount += 1;
-          // console.log('3');
-          // console.log(this.messageCount);
           this.renderer.addMsg(messagesList[index], 'prepend');
         } else {
-          this.messageCount += 1;
-          // console.log('4');
-          // console.log(this.messageCount);
           this.renderer.addFileMsg(messagesList[index], 'prepend');
         }
       }
     } else {
       for (const item of messagesList) {
-        // console.log(item.type);
         if (item.type === 'text') {
-          // console.log(item.type);
-          this.messageCount += 1;
-          // console.log('3');
-          // console.log(this.messageCount);
           this.renderer.addMsg(item, 'append');
         } else {
-          this.messageCount += 1;
-          // console.log('4');
-          // console.log(this.messageCount);
           this.renderer.addFileMsg(item, 'append');
         }
       }
-
-      // this.renderer.addMsg(item.text, item.id);
     }
   }
 }

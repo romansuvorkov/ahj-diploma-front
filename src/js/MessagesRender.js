@@ -74,14 +74,14 @@ export default class MessagesRender {
       newMsg.classList.add('image_message_item');
     } else if (obj.type === 'audio') {
       newMsg.innerHTML = `
-            <img class="file_preview" src="../img/audio.png">
-            <span class="image_name">${obj.name}</span>
-            <a class="link_download background_image" href="${obj.msg}" download="${obj.name}"></a>
-          `;
+      <audio src="${obj.msg}" class="media" controls="controls"></audio>
+      <span class="image_name">${obj.name}</span>
+      <a class="link_download background_image" href="${obj.msg}" download="${obj.name}"></a>
+    `;
       newMsg.classList.add('file_message_item');
     } else if (obj.type === 'video') {
       newMsg.innerHTML = `
-            <img class="file_preview" src="../img/video.png">
+            <video src="${obj.msg}" class="media" controls="controls"></video>
             <span class="image_name">${obj.name}</span>
             <a class="link_download background_image" href="${obj.msg}" download="${obj.name}"></a>
           `;
