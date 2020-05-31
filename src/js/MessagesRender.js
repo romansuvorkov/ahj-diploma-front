@@ -11,36 +11,31 @@ export default class MessagesRender {
     const matchedLinks = [...messageText.matchAll(searchlink)];
 
     for (let i = 0; i < matchedLinks.length; i += 1) {
-      // console.log(i);
-      // console.log(matchedLinks.length);
       messageText = messageText.replace(matchedLinks[i][0], `
       <a href="${matchedLinks[i][0]}">${matchedLinks[i][0]}</a>
     `);
+    }
+    while (messageText.includes(String.fromCodePoint(0x000A))) {
+      messageText = messageText.replace(String.fromCodePoint(0x000A), '<br>');
     }
     const messageWrapper = document.createElement('div');
     messageWrapper.classList.add('message_vrapper');
     const messageFavorite = document.createElement('span');
     messageFavorite.classList.add('message_favorite');
-    // console.log(obj);
     if (obj.favorite === 'true') {
       messageFavorite.classList.add('favorite_active');
     } else {
       messageFavorite.classList.add('favorite_false');
     }
-    // messageFavorite.classList.add('favorite_false');
     const newMsg = document.createElement('div');
     newMsg.classList.add('message');
     const msgContent = document.createElement('span');
     msgContent.innerHTML = `${messageText}`;
     msgContent.classList.add('message_content');
     newMsg.append(msgContent);
-    // newMsg.textContent = messageText;
-    // newMsg.innerHTML = `${messageText}`;
-    // console.log(messageText);
     messageWrapper.dataset.id = obj.id;
     messageWrapper.append(messageFavorite);
     messageWrapper.append(newMsg);
-    // console.log(obj);
     if (obj.geo !== null) {
       const geo = document.createElement('span');
       geo.innerHTML = `${obj.geo}`;
