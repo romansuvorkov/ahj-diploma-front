@@ -14,7 +14,6 @@ export default class Recorder {
     if (!window.MediaRecorder) {
       this.audioRecBtn.classList.add('none');
       this.videoRecBtn.classList.add('none');
-      return;
     } else {
       this.recTimer = document.querySelector('.timer');
       this.audioRecBtn.addEventListener('click', () => {
@@ -24,7 +23,7 @@ export default class Recorder {
         this.controller.inputBtn.classList.add('none');
         this.start(false);
       });
-  
+
       this.videoRecBtn.addEventListener('click', () => {
         this.audioRecBtn.classList.add('none');
         this.videoRecBtn.classList.add('none');
