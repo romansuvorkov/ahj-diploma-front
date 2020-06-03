@@ -8,9 +8,9 @@ export default class MessengerController {
     this.clipBtn = document.querySelector('.clip_btn');
     this.geoBtn = document.querySelector('.geo_btn');
     this.inputBtn = document.querySelector('.input_btn');
-    this.wsURL = 'ws://localhost:7070/ws';
+    // this.wsURL = 'ws://localhost:7070/ws';
     this.favorite = document.querySelector('.favorite');
-    // this.wsURL = 'wss://ahj-diploma-serv.herokuapp.com/ws';
+    this.wsURL = 'wss://ahj-diploma-serv.herokuapp.com/ws';
     this.lazyLoadCounter = 10;
     this.messageslimit = 10;
     this.favoriteSwitch = false;
