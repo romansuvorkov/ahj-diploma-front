@@ -1,7 +1,7 @@
 export default class API {
   constructor() {
-    // this.server = 'http://localhost:7070';
-    this.server = 'https://ahj-diploma-serv.herokuapp.com';
+    this.server = 'http://localhost:7070';
+    // this.server = 'https://ahj-diploma-serv.herokuapp.com';
   }
 
   addMsg(text) {

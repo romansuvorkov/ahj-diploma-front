@@ -11,22 +11,44 @@ export default class Recorder {
   }
 
   async init() {
-    this.recTimer = document.querySelector('.timer');
-    this.audioRecBtn.addEventListener('click', () => {
+    if (!window.MediaRecorder) {
       this.audioRecBtn.classList.add('none');
       this.videoRecBtn.classList.add('none');
-      this.recInterface.classList.remove('none');
-      this.controller.inputBtn.classList.add('none');
-      this.start(false);
-    });
+      return;
+    } else {
+      this.recTimer = document.querySelector('.timer');
+      this.audioRecBtn.addEventListener('click', () => {
+        this.audioRecBtn.classList.add('none');
+        this.videoRecBtn.classList.add('none');
+        this.recInterface.classList.remove('none');
+        this.controller.inputBtn.classList.add('none');
+        this.start(false);
+      });
+  
+      this.videoRecBtn.addEventListener('click', () => {
+        this.audioRecBtn.classList.add('none');
+        this.videoRecBtn.classList.add('none');
+        this.recInterface.classList.remove('none');
+        this.controller.inputBtn.classList.add('none');
+        this.start(true);
+      });
+    }
+    // this.recTimer = document.querySelector('.timer');
+    // this.audioRecBtn.addEventListener('click', () => {
+    //   this.audioRecBtn.classList.add('none');
+    //   this.videoRecBtn.classList.add('none');
+    //   this.recInterface.classList.remove('none');
+    //   this.controller.inputBtn.classList.add('none');
+    //   this.start(false);
+    // });
 
-    this.videoRecBtn.addEventListener('click', () => {
-      this.audioRecBtn.classList.add('none');
-      this.videoRecBtn.classList.add('none');
-      this.recInterface.classList.remove('none');
-      this.controller.inputBtn.classList.add('none');
-      this.start(true);
-    });
+    // this.videoRecBtn.addEventListener('click', () => {
+    //   this.audioRecBtn.classList.add('none');
+    //   this.videoRecBtn.classList.add('none');
+    //   this.recInterface.classList.remove('none');
+    //   this.controller.inputBtn.classList.add('none');
+    //   this.start(true);
+    // });
   }
 
   async start(typeOfRec) {
@@ -38,10 +60,10 @@ export default class Recorder {
       let confirmSave = true;
       let timerValue = 0;
 
-      if (!window.MediaRecorder) {
-        this.createPopup('Пожалуйста разрешите запись');
-        return;
-      }
+      // if (!window.MediaRecorder) {
+      //   this.createPopup('Пожалуйста разрешите запись');
+      //   return;
+      // }
 
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
